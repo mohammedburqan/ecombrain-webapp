@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { LayoutDashboard, Store, ListTodo, BarChart3, Users, Settings, LogOut, Bot, Shield } from "lucide-react"
+import { LayoutDashboard, Store, ListTodo, BarChart3, Users, Settings, LogOut, Bot, Shield, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
@@ -11,6 +11,7 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Agents", href: "/dashboard/agents", icon: Bot },
   { name: "Shopify Stores", href: "/dashboard/shopify", icon: Store },
+  { name: "Promotional Ads", href: "/dashboard/promotional-ads", icon: Sparkles },
   { name: "Tasks", href: "/dashboard/tasks", icon: ListTodo },
   { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
 ]
