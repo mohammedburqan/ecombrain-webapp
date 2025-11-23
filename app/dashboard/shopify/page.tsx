@@ -1,8 +1,8 @@
-import { createSupabaseServerComponentClient } from '@/lib/supabase/server'
+import { createSupabaseClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export default async function ShopifyStoresPage() {
-  const supabase = await createSupabaseServerComponentClient()
+  const supabase = createSupabaseClient()
   
   const {
     data: { user },
@@ -15,12 +15,15 @@ export default async function ShopifyStoresPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Shopify Stores</h1>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-white mb-2">Shopify Stores</h1>
+          <p className="text-gray-400">Manage your Shopify store integrations</p>
+        </div>
         <Link
           href="/dashboard/shopify/create"
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+          className="px-4 py-2 bg-[#3194d1] text-white rounded-lg hover:bg-[#267ab0] transition-colors shadow-lg shadow-[#3194d1]/20"
         >
           Create New Store
         </Link>
@@ -32,14 +35,14 @@ export default async function ShopifyStoresPage() {
             <Link
               key={store.id}
               href={`/dashboard/shopify/${store.id}`}
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
+              className="bg-[#1e2d5f] p-6 rounded-xl border border-[#2a3b75] hover:border-[#3194d1]/50 transition-all hover:shadow-lg hover:shadow-[#3194d1]/10"
             >
-              <h3 className="text-xl font-bold mb-2">{store.store_name}</h3>
-              <p className="text-gray-600 text-sm mb-4">{store.shopify_domain}</p>
-              <span className={`inline-block px-3 py-1 rounded text-sm ${
-                store.status === 'active' ? 'bg-green-100 text-green-800' :
-                store.status === 'creating' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-red-100 text-red-800'
+              <h3 className="text-xl font-bold mb-2 text-white">{store.store_name}</h3>
+              <p className="text-gray-400 text-sm mb-4">{store.shopify_domain}</p>
+              <span className={`inline-block px-3 py-1 rounded-lg text-sm border ${
+                store.status === 'active' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                store.status === 'creating' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
+                'bg-red-500/20 text-red-400 border-red-500/30'
               }`}>
                 {store.status}
               </span>
@@ -47,11 +50,11 @@ export default async function ShopifyStoresPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-white p-12 rounded-lg shadow text-center">
-          <p className="text-gray-500 mb-4">No stores yet</p>
+        <div className="bg-[#1e2d5f] p-12 rounded-xl border border-[#2a3b75] text-center">
+          <p className="text-gray-400 mb-4">No stores yet</p>
           <Link
             href="/dashboard/shopify/create"
-            className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            className="inline-block px-4 py-2 bg-[#3194d1] text-white rounded-lg hover:bg-[#267ab0] transition-colors shadow-lg shadow-[#3194d1]/20"
           >
             Create Your First Store
           </Link>

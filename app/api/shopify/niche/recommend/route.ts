@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthForAPI } from '@/lib/auth'
 import { NicheSelectionAgent } from '@/lib/agents/niche-selection'
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
     const body = await request.json()
 
     const agent = new NicheSelectionAgent('temp-niche', 'Niche Selection Agent')

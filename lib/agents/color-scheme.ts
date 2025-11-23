@@ -52,12 +52,11 @@ export class ColorSchemeAgent extends BaseAgent {
 
   async generateMultipleSchemes(niche: string, count: number = 3): Promise<TaskOutput> {
     try {
-      const schemes = []
-      
-      for (let i = 0; i < count; i++) {
-        const scheme = await openAIClient.recommendColorScheme(niche)
-        schemes.push(scheme)
-      }
+      // Generate all schemes in parallel for 3x speed improvement
+      const schemePromises = Array.from({ length: count }, () => 
+        openAIClient.recommendColorScheme(niche)
+      )
+      const schemes = await Promise.all(schemePromises)
 
       return {
         success: true,

@@ -29,8 +29,8 @@ export class AgentRegistry {
   }
 
   async loadFromDatabase(): Promise<void> {
-    const { createSupabaseServerClient } = await import('../supabase/server')
-    const supabase = createSupabaseServerClient()
+    const { createSupabaseClient } = await import('../supabase/server')
+    const supabase = createSupabaseClient()
     
     const { data: agents, error } = await supabase
       .from('agents')

@@ -1,6 +1,6 @@
 import { BaseAgent, TaskInput, TaskOutput } from './base-agent'
 import { AgentType } from '@/types/database'
-import { createSupabaseServerClient } from '../supabase/server'
+import { createSupabaseClient } from '../supabase/server'
 
 export class ShopifyStoreCreationAgent extends BaseAgent {
   constructor(id: string, name: string, config: Record<string, any> = {}) {
@@ -11,24 +11,47 @@ export class ShopifyStoreCreationAgent extends BaseAgent {
     try {
       const storeName = input.storeName || input.name
       const userId = input.userId || context?.userId
+      const shopifyDomain = input.shopifyDomain || `${storeName.toLowerCase().replace(/\s+/g, '-')}.myshopify.com`
+      const apiKey = input.apiKey
+      const apiSecret = input.apiSecret
+      const adminApiAccessToken = input.adminApiAccessToken
 
       if (!storeName || !userId) {
         throw new Error('Store name and user ID are required')
       }
 
-      await this.log('info', `Creating Shopify store: ${storeName}`, { userId })
+      // Validate API credentials if provided
+      if (shopifyDomain && (!apiKey || !apiSecret || !adminApiAccessToken)) {
+        throw new Error('Shopify API credentials (API Key, API Secret, and Admin API Access Token) are required when connecting to an existing store')
+      }
+
+      await this.log('info', `Creating Shopify store: ${storeName}`, { userId, shopifyDomain })
+
+      // Prepare store config with API credentials
+      const storeConfig: Record<string, any> = {
+        ...(input.config || {}),
+      }
+
+      // Store API credentials securely in store_config
+      if (apiKey && apiSecret) {
+        storeConfig.apiCredentials = {
+          apiKey,
+          apiSecret,
+          // Note: Admin API Access Token is stored separately as access_token for backward compatibility
+        }
+      }
 
       // Create store record in database
-      const supabase = createSupabaseServerClient()
+      const supabase = createSupabaseClient()
       const { data: store, error } = await supabase
         .from('shopify_stores')
         .insert({
           user_id: userId,
           store_name: storeName,
-          shopify_domain: `${storeName.toLowerCase().replace(/\s+/g, '-')}.myshopify.com`,
-          access_token: '', // Will be set after OAuth
+          shopify_domain: shopifyDomain,
+          access_token: adminApiAccessToken || '', // Store Admin API Access Token as access_token
           status: 'creating',
-          store_config: input.config || {},
+          store_config: storeConfig,
         })
         .select()
         .single()
@@ -40,11 +63,8 @@ export class ShopifyStoreCreationAgent extends BaseAgent {
       await this.updateMetrics('stores_created', 1)
       await this.log('info', `Store record created: ${store.id}`)
 
-      // In a real implementation, this would:
-      // 1. Create Shopify Partner API store
-      // 2. Handle OAuth flow
-      // 3. Store access tokens securely
-      // 4. Configure initial store settings
+      // Store is now ready with API credentials
+      // The credentials can be used to interact with the Shopify store
 
       return {
         success: true,

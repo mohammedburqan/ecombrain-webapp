@@ -1,15 +1,13 @@
 import '@shopify/shopify-api/adapters/node'
-import { shopifyApi, LATEST_API_VERSION } from '@shopify/shopify-api'
-import { NodeHttpRuntime } from '@shopify/shopify-api/runtime/node'
+import { shopifyApi, ApiVersion } from '@shopify/shopify-api'
 
 const shopify = shopifyApi({
   apiKey: process.env.SHOPIFY_API_KEY || '',
   apiSecretKey: process.env.SHOPIFY_API_SECRET || '',
   scopes: ['read_products', 'write_products', 'read_themes', 'write_themes', 'read_orders', 'write_orders'],
   hostName: process.env.NEXT_PUBLIC_APP_URL?.replace('https://', '').replace('http://', '') || 'localhost:3000',
-  apiVersion: LATEST_API_VERSION,
+  apiVersion: ApiVersion.January25,
   isEmbeddedApp: false,
-  httpRuntime: NodeHttpRuntime(),
 })
 
 export function createShopifyClient(accessToken: string, shop: string) {

@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSupabaseServerComponentClient } from '@/lib/supabase/server'
-import { requireAdmin } from '@/lib/auth'
+import { createSupabaseClient } from '@/lib/supabase/server'
+import { requireAuthForAPI } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
     const { id } = await params
-    const supabase = await createSupabaseServerComponentClient()
+    const supabase = createSupabaseClient()
     
     const { data, error } = await supabase
       .from('agents')
@@ -33,9 +39,15 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
     const { id } = await params
-    const supabase = await createSupabaseServerComponentClient()
+    const supabase = createSupabaseClient()
     const body = await request.json()
 
     const { data, error } = await supabase
@@ -66,9 +78,15 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
     const { id } = await params
-    const supabase = await createSupabaseServerComponentClient()
+    const supabase = createSupabaseClient()
 
     const { error } = await supabase
       .from('agents')

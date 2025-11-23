@@ -1,5 +1,5 @@
 import { createShopifyClient } from './client'
-import { createSupabaseServerClient } from '../supabase/server'
+import { createSupabaseClient } from '../supabase/server'
 
 export interface StoreConfig {
   name: string
@@ -18,7 +18,7 @@ export class ShopifyStoreOperations {
     // In production, this would use Shopify Partner API to create a development store
     // For now, we'll create a record in our database
     
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     
     const { data: store, error } = await supabase
       .from('shopify_stores')
@@ -45,7 +45,7 @@ export class ShopifyStoreOperations {
   }
 
   async getStoreAccessToken(storeId: string): Promise<string | null> {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     
     const { data: store } = await supabase
       .from('shopify_stores')
@@ -60,7 +60,7 @@ export class ShopifyStoreOperations {
     storeId: string,
     config: Partial<StoreConfig>
   ): Promise<void> {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     
     const { data: store } = await supabase
       .from('shopify_stores')
@@ -83,7 +83,7 @@ export class ShopifyStoreOperations {
       throw new Error('Store access token not found')
     }
 
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     const { data: store } = await supabase
       .from('shopify_stores')
       .select('shopify_domain')

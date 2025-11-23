@@ -55,7 +55,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 # AI Provider Configuration
 GEMINI_API_KEY=your_gemini_api_key
-OPENAI_API_KEY=your_openai_api_key
+BYTEZ_API_KEY=your_bytez_api_key  # Optional: defaults to provided key if not set
 
 # Shopify Configuration
 SHOPIFY_API_KEY=your_shopify_api_key

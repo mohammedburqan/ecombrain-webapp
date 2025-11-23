@@ -9,7 +9,6 @@ const requiredVars = [
   'NEXT_PUBLIC_SUPABASE_URL',
   'NEXT_PUBLIC_SUPABASE_ANON_KEY',
   'SUPABASE_SERVICE_ROLE_KEY',
-  'OPENAI_API_KEY',
   'GEMINI_API_KEY',
 ];
 
@@ -29,7 +28,7 @@ if (!fs.existsSync(envPath)) {
   console.log('');
   console.log('# AI Provider Configuration');
   console.log('GEMINI_API_KEY=your_gemini_api_key');
-  console.log('OPENAI_API_KEY=your_openai_api_key');
+  console.log('BYTEZ_API_KEY=your_bytez_api_key  # Optional: defaults to provided key');
   console.log('');
   console.log('# App Configuration');
   console.log('NEXT_PUBLIC_APP_URL=http://localhost:3000');

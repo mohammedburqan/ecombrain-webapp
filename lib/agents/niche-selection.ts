@@ -53,13 +53,8 @@ export class NicheSelectionAgent extends BaseAgent {
 
   async recommendMultipleNiches(count: number = 5): Promise<TaskOutput> {
     try {
-      const prompt = `Generate ${count} high-potential e-commerce niches with low competition and high market opportunity. For each niche, provide:
-- niche_name
-- market_opportunity (1-10)
-- competition_level (1-10, lower is better)
-- recommended_colors (3-5 hex codes)
-- target_audience
-- key_products (5-10 product types)`
+      // Optimized shorter prompt for faster batch generation
+      const prompt = `Generate ${count} e-commerce niches. Each: {niche_name, market_opportunity:1-10, competition_level:1-10, recommended_colors:[hex], target_audience, key_products:[...]}`
 
       const niches = await aiRouter.route(
         'niche_analysis',

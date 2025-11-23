@@ -1,14 +1,79 @@
-import OpenAI from 'openai'
+// @ts-ignore - bytez.js may not have TypeScript definitions
+import Bytez from 'bytez.js'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Type definitions for Bytez.js
+interface BytezModel {
+  run(messages: Array<{ role: string; content: string }>): Promise<{ error?: any; output?: any }>
+}
+
+interface BytezSDK {
+  model(modelName: string): BytezModel
+}
+
+// Initialize Bytez SDK
+const BYTEZ_API_KEY = process.env.BYTEZ_API_KEY || '89561e05a6630f3b1b45f0ab16fd90fa'
+const DEFAULT_MODEL = 'Qwen/Qwen3-0.6B'
+
+let bytezSDK: BytezSDK | null = null
+
+if (BYTEZ_API_KEY) {
+  try {
+    // @ts-ignore
+    bytezSDK = new Bytez(BYTEZ_API_KEY) as BytezSDK
+  } catch (error) {
+    console.error('Failed to initialize Bytez SDK:', error)
+  }
+}
 
 export class OpenAIClient {
-  private client: OpenAI
+  private sdk: BytezSDK | null
+  private modelName: string
 
-  constructor() {
-    this.client = openai
+  constructor(modelName: string = DEFAULT_MODEL) {
+    this.sdk = bytezSDK
+    this.modelName = modelName
+  }
+
+  private ensureSDK(): BytezSDK {
+    if (!this.sdk) {
+      throw new Error('Bytez API key is not configured. Please set BYTEZ_API_KEY environment variable.')
+    }
+    return this.sdk
+  }
+
+  private async runModel(messages: Array<{ role: string; content: string }>): Promise<string> {
+    const sdk = this.ensureSDK()
+    const model = sdk.model(this.modelName)
+    
+    const { error, output } = await model.run(messages)
+    
+    if (error) {
+      throw new Error(`Bytez API error: ${error}`)
+    }
+    
+    if (!output) {
+      throw new Error('No output received from Bytez API')
+    }
+
+    // Handle different output formats
+    if (typeof output === 'string') {
+      return output
+    }
+    
+    if (Array.isArray(output) && output.length > 0) {
+      // If output is an array, get the last message content
+      const lastMessage = output[output.length - 1]
+      if (typeof lastMessage === 'object' && lastMessage.content) {
+        return lastMessage.content
+      }
+      return String(output[output.length - 1])
+    }
+    
+    if (typeof output === 'object' && output.content) {
+      return output.content
+    }
+    
+    return String(output)
   }
 
   async generateText(
@@ -21,23 +86,53 @@ export class OpenAIClient {
     }
   ): Promise<string> {
     try {
-      const response = await this.client.chat.completions.create({
-        model: options?.model || 'gpt-4',
-        messages: [
-          ...(options?.systemPrompt
-            ? [{ role: 'system' as const, content: options.systemPrompt }]
-            : []),
-          { role: 'user' as const, content: prompt },
-        ],
-        temperature: options?.temperature ?? 0.7,
-        max_tokens: options?.maxTokens ?? 4096,
-      })
+      // Use custom model if provided
+      if (options?.model) {
+        const sdk = this.ensureSDK()
+        const model = sdk.model(options.model)
+        const messages = [
+          ...(options?.systemPrompt ? [{ role: 'system', content: options.systemPrompt }] : []),
+          { role: 'user', content: prompt }
+        ]
+        const { error, output } = await model.run(messages)
+        
+        if (error) {
+          throw new Error(`Bytez API error: ${error}`)
+        }
+        
+        return this.extractOutput(output)
+      }
 
-      return response.choices[0]?.message?.content || ''
+      const messages = [
+        ...(options?.systemPrompt ? [{ role: 'system', content: options.systemPrompt }] : []),
+        { role: 'user', content: prompt }
+      ]
+
+      return await this.runModel(messages)
     } catch (error) {
-      console.error('OpenAI API error:', error)
-      throw new Error(`OpenAI API error: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      console.error('Bytez API error:', error)
+      throw new Error(`Bytez API error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
+  }
+
+  private extractOutput(output: any): string {
+    if (typeof output === 'string') {
+      return output
+    }
+    
+    if (Array.isArray(output) && output.length > 0) {
+      const lastMessage = output[output.length - 1]
+      if (typeof lastMessage === 'object' && lastMessage.content) {
+        return lastMessage.content
+      }
+      return String(lastMessage)
+    }
+    
+    if (typeof output === 'object' && output.content) {
+      return output.content
+    }
+    
+    return String(output)
   }
 
   async generateStructuredOutput<T>(
@@ -46,47 +141,29 @@ export class OpenAIClient {
     options?: { model?: string; temperature?: number }
   ): Promise<T> {
     try {
-      const response = await this.client.beta.chat.completions.parse({
-        model: options?.model || 'gpt-4',
-        messages: [
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ],
-        response_format: {
-          type: 'json_schema',
-          json_schema: {
-            name: 'response',
-            schema: {
-              type: 'object',
-              properties: schema,
-              required: Object.keys(schema),
-            },
-            strict: true,
-          },
-        },
-        temperature: options?.temperature ?? 0.3,
+      // Optimized: Shorter JSON instruction for faster processing
+      const jsonPrompt = `${prompt}\n\nJSON only: ${JSON.stringify(schema)}`
+
+      const response = await this.generateText(jsonPrompt, {
+        ...options,
+        temperature: options?.temperature ?? 0.3, // Default to lower temperature for speed
+        maxTokens: 500, // Limit tokens for faster generation
       })
-
-      const parsed = response.choices[0]?.message?.parsed
-      if (!parsed) {
-        throw new Error('Failed to parse structured output from OpenAI')
-      }
-
-      return parsed as T
-    } catch (error) {
-      // Fallback to regular generation with JSON parsing
-      try {
-        const jsonPrompt = `${prompt}\n\nReturn the response as valid JSON matching this schema: ${JSON.stringify(schema)}`
-        const response = await this.generateText(jsonPrompt, options)
-        const jsonMatch = response.match(/\{[\s\S]*\}/)
-        if (jsonMatch) {
+      
+      // Try to extract JSON from the response (optimized regex)
+      const jsonMatch = response.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        try {
           return JSON.parse(jsonMatch[0]) as T
+        } catch (parseError) {
+          console.error('JSON parse error:', parseError)
+          throw new Error('Failed to parse JSON response from Bytez API')
         }
-      } catch (fallbackError) {
-        console.error('OpenAI structured output fallback error:', fallbackError)
       }
+      
+      throw new Error('No valid JSON found in response')
+    } catch (error) {
+      console.error('Bytez structured output error:', error)
       throw error
     }
   }
@@ -99,16 +176,9 @@ export class OpenAIClient {
     target_audience: string
     key_products: string[]
   }> {
-    const prompt = `Analyze this e-commerce niche and provide insights:
-Niche: ${nicheDescription}
-
-Provide:
-- niche_name: A concise name for this niche
-- market_opportunity: Score from 1-10
-- competition_level: Score from 1-10 (1 = low competition)
-- recommended_colors: Array of 3-5 hex color codes that fit this niche
-- target_audience: Description of the target customer
-- key_products: Array of 5-10 product types that would sell well in this niche`
+    // Optimized shorter prompt for faster generation
+    const prompt = `E-commerce niche: ${nicheDescription}
+Return JSON: {niche_name, market_opportunity:1-10, competition_level:1-10, recommended_colors:[hex], target_audience, key_products:[...]}`
 
     return this.generateStructuredOutput(
       prompt,
@@ -120,7 +190,7 @@ Provide:
         target_audience: { type: 'string' },
         key_products: { type: 'array', items: { type: 'string' } },
       },
-      { temperature: 0.5 }
+      { temperature: 0.3 } // Lower temperature for faster, more deterministic responses
     )
   }
 
@@ -133,15 +203,9 @@ Provide:
     accent_colors: string[]
     rationale: string
   }> {
-    const prompt = `Recommend a color scheme for an e-commerce store:
-Niche: ${niche}
-${brandPersonality ? `Brand Personality: ${brandPersonality}` : ''}
-
-Provide:
-- primary_color: Main brand color (hex code)
-- secondary_color: Secondary brand color (hex code)
-- accent_colors: Array of 2-3 accent colors (hex codes)
-- rationale: Brief explanation of why these colors work for this niche`
+    // Optimized shorter prompt for faster generation
+    const prompt = `Niche: ${niche}${brandPersonality ? ` | Personality: ${brandPersonality}` : ''}
+Return JSON: {primary_color:hex, secondary_color:hex, accent_colors:[hex], rationale:brief}`
 
     return this.generateStructuredOutput(
       prompt,
@@ -151,10 +215,9 @@ Provide:
         accent_colors: { type: 'array', items: { type: 'string' } },
         rationale: { type: 'string' },
       },
-      { temperature: 0.6 }
+      { temperature: 0.4 } // Lower temperature for faster, more deterministic responses
     )
   }
 }
 
 export const openAIClient = new OpenAIClient()
-

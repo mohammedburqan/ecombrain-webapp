@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSupabaseServerComponentClient } from '@/lib/supabase/server'
-import { requireAuth } from '@/lib/auth'
+import { createSupabaseClient } from '@/lib/supabase/server'
+import { requireAuthForAPI } from '@/lib/auth'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
     const { id } = await params
-    const supabase = await createSupabaseServerComponentClient()
+    const supabase = createSupabaseClient()
     
     let query = supabase
       .from('agent_tasks')

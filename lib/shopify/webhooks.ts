@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from '../supabase/server'
+import { createSupabaseClient } from '../supabase/server'
 
 export interface WebhookEvent {
   topic: string
@@ -8,7 +8,7 @@ export interface WebhookEvent {
 
 export class ShopifyWebhookHandler {
   async handleWebhook(event: WebhookEvent): Promise<void> {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
 
     // Log webhook event
     await supabase.from('analytics_events').insert({

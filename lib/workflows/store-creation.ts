@@ -4,7 +4,7 @@ import { ColorSchemeAgent } from '../agents/color-scheme'
 import { ProductManagementAgent } from '../agents/product-management'
 import { ShopifyStoreCreationAgent } from '../agents/shopify-store-creation'
 import { ShopifyDeploymentAgent } from '../agents/shopify-deployment'
-import { createSupabaseServerClient } from '../supabase/server'
+import { createSupabaseClient } from '../supabase/server'
 import { themeOperations } from '../shopify/theme'
 import { productOperations } from '../shopify/products'
 
@@ -19,6 +19,10 @@ export interface StoreCreationInput {
     accentColors: string[]
   }
   products?: any[]
+  shopifyDomain?: string
+  apiKey?: string
+  apiSecret?: string
+  adminApiAccessToken?: string
 }
 
 export interface StoreCreationProgress {
@@ -35,7 +39,7 @@ export class StoreCreationWorkflow {
     jobId: string
     progress: StoreCreationProgress[]
   }> {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
 
     // Create job record
     const { data: job } = await supabase
@@ -177,6 +181,10 @@ export class StoreCreationWorkflow {
       const storeResult = await storeAgent.execute({
         storeName: input.storeName,
         userId: input.userId,
+        shopifyDomain: input.shopifyDomain,
+        apiKey: input.apiKey,
+        apiSecret: input.apiSecret,
+        adminApiAccessToken: input.adminApiAccessToken,
       })
 
       if (!storeResult.success) {
@@ -285,7 +293,7 @@ export class StoreCreationWorkflow {
   }
 
   async getProgress(jobId: string): Promise<StoreCreationProgress[]> {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     
     const { data: job } = await supabase
       .from('store_creation_jobs')

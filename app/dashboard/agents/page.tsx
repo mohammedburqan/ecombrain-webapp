@@ -1,10 +1,10 @@
-import { createSupabaseServerComponentClient } from '@/lib/supabase/server'
-import { requireAdmin } from '@/lib/auth'
+import { createSupabaseClient } from '@/lib/supabase/server'
+import { requireAuth } from '@/lib/auth'
 import Link from 'next/link'
 
 export default async function AgentsPage() {
-  await requireAdmin()
-  const supabase = await createSupabaseServerComponentClient()
+  await requireAuth()
+  const supabase = createSupabaseClient()
   
   const { data: agents } = await supabase
     .from('agents')

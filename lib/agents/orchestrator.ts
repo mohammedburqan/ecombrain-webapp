@@ -2,7 +2,7 @@ import { BaseAgent, TaskInput, TaskOutput } from './base-agent'
 import { agentRegistry } from './registry'
 import { geminiClient } from '../ai/gemini'
 import { aiRouter } from '../ai/router'
-import { createSupabaseServerClient } from '../supabase/server'
+import { createSupabaseClient } from '../supabase/server'
 
 export interface WorkflowStep {
   agentId: string
@@ -43,7 +43,7 @@ export class AgentOrchestrator {
       )
 
       // Create collaboration session
-      const supabase = createSupabaseServerClient()
+      const supabase = createSupabaseClient()
       const { data: session } = await supabase
         .from('collaboration_sessions')
         .insert({

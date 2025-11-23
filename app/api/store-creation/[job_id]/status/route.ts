@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthForAPI } from '@/lib/auth'
 import { storeCreationWorkflow } from '@/lib/workflows/store-creation'
 
 export async function GET(
@@ -7,7 +7,13 @@ export async function GET(
   { params }: { params: Promise<{ job_id: string }> }
 ) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
     const { job_id } = await params
 
     const progress = await storeCreationWorkflow.getProgress(job_id)

@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSupabaseServerComponentClient } from '@/lib/supabase/server'
-import { requireAdmin } from '@/lib/auth'
+import { createSupabaseClient } from '@/lib/supabase/server'
+import { requireAuthForAPI } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
-    await requireAdmin()
-    const supabase = await createSupabaseServerComponentClient()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+    const supabase = createSupabaseClient()
     
     const { data, error } = await supabase
       .from('agents')
@@ -25,8 +31,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAdmin()
-    const supabase = await createSupabaseServerComponentClient()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+    const supabase = createSupabaseClient()
     const body = await request.json()
 
     const { data, error } = await supabase

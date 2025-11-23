@@ -1,6 +1,6 @@
 import { BaseAgent, TaskInput } from './base-agent'
 import { agentRegistry } from './registry'
-import { createSupabaseServerClient } from '../supabase/server'
+import { createSupabaseClient } from '../supabase/server'
 
 export interface QueuedTask {
   id: string
@@ -22,7 +22,7 @@ export class TaskQueue {
     priority: number = 0,
     scheduledFor?: Date
   ): Promise<string> {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     
     const { data: task } = await supabase
       .from('agent_tasks')
@@ -76,7 +76,7 @@ export class TaskQueue {
         throw new Error(`Agent ${task.agentId} not found`)
       }
 
-      const supabase = createSupabaseServerClient()
+      const supabase = createSupabaseClient()
       await supabase
         .from('agent_tasks')
         .update({
@@ -99,7 +99,7 @@ export class TaskQueue {
         })
         .eq('id', task.id)
     } catch (error) {
-      const supabase = createSupabaseServerClient()
+      const supabase = createSupabaseClient()
       await supabase
         .from('agent_tasks')
         .update({

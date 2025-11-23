@@ -1,11 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuthForAPI } from '@/lib/auth'
 import { ColorSchemeAgent } from '@/lib/agents/color-scheme'
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
     const body = await request.json()
+
+    if (!body.niche) {
+      return NextResponse.json(
+        { error: 'Niche is required', success: false },
+        { status: 400 }
+      )
+    }
 
     const agent = new ColorSchemeAgent('temp-color', 'Color Scheme Agent')
     
@@ -20,8 +33,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(result)
     }
   } catch (error: any) {
+    console.error('Color recommendation error:', error)
     return NextResponse.json(
-      { error: error.message || 'Failed to get color recommendations' },
+      { 
+        error: error.message || 'Failed to get color recommendations',
+        success: false,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
       { status: 500 }
     )
   }

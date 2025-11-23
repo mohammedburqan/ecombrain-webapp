@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSupabaseServerComponentClient } from '@/lib/supabase/server'
-import { requireAuth } from '@/lib/auth'
+import { createSupabaseClient } from '@/lib/supabase/server'
+import { requireAuthForAPI } from '@/lib/auth'
 import { agentRegistry } from '@/lib/agents/registry'
 
 export async function POST(
@@ -8,7 +8,13 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await requireAuth()
+    const user = await requireAuthForAPI()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
     const { id } = await params
     const body = await request.json()
 
@@ -20,7 +26,7 @@ export async function POST(
       )
     }
 
-    const supabase = await createSupabaseServerComponentClient()
+    const supabase = createSupabaseClient()
     
     // Create task record
     const { data: task } = await supabase

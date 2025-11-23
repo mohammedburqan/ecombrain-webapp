@@ -1,0 +1,58 @@
+<svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shark with integrated circuit board design -->
+  <g id="shark-circuit">
+    <!-- Shark body with integrated circuit traces -->
+    <path d="M 20 40 Q 15 35 12 30 Q 10 25 12 20 Q 15 15 20 18 Q 22 20 24 22" 
+          stroke="#4A90E2" fill="none" stroke-width="1.5" stroke-linecap="round"/>
+    
+    <!-- Shark head with jagged teeth -->
+    <path d="M 12 30 L 8 28 L 6 30 L 8 32 Z" fill="#4A90E2"/>
+    <path d="M 8 28 L 5 26 L 3 28 L 5 30 Z" fill="#4A90E2"/>
+    
+    <!-- Shark eye -->
+    <circle cx="18" cy="24" r="1.5" fill="#4A90E2"/>
+    
+    <!-- Circuit board traces integrated into shark body -->
+    <g stroke="#4A90E2" stroke-width="1" fill="none">
+      <!-- Horizontal traces extending from shark body -->
+      <line x1="24" y1="22" x2="35" y2="22"/>
+      <line x1="24" y1="28" x2="40" y2="28"/>
+      <line x1="24" y1="34" x2="38" y2="34"/>
+      <line x1="24" y1="40" x2="42" y2="40"/>
+      <line x1="24" y1="46" x2="36" y2="46"/>
+      
+      <!-- Vertical connections between traces -->
+      <line x1="35" y1="22" x2="35" y2="28"/>
+      <line x1="40" y1="28" x2="40" y2="34"/>
+      <line x1="38" y1="34" x2="38" y2="40"/>
+      <line x1="42" y1="40" x2="42" y2="46"/>
+      
+      <!-- Circuit pads/nodes at trace ends -->
+      <circle cx="35" cy="22" r="2" fill="none" stroke="#4A90E2"/>
+      <circle cx="40" cy="28" r="2" fill="none" stroke="#4A90E2"/>
+      <circle cx="38" cy="34" r="2" fill="none" stroke="#4A90E2"/>
+      <circle cx="42" cy="40" r="2" fill="none" stroke="#4A90E2"/>
+      <circle cx="36" cy="46" r="2" fill="none" stroke="#4A90E2"/>
+    </g>
+    
+    <!-- Shark dorsal fin with circuit-like internal structure -->
+    <path d="M 25 18 L 30 12 L 35 18" stroke="#4A90E2" fill="none" stroke-width="1.5"/>
+    <line x1="30" y1="12" x2="30" y2="15" stroke="#4A90E2" stroke-width="1"/>
+    <circle cx="30" cy="15" r="1" fill="#4A90E2"/>
+    
+    <!-- Shark tail fin with circuit elements -->
+    <path d="M 40 35 L 50 30 L 48 40 L 40 45 Z" stroke="#4A90E2" fill="none" stroke-width="1.5"/>
+    <line x1="45" y1="35" x2="47" y2="37" stroke="#4A90E2" stroke-width="1"/>
+    <circle cx="47" cy="37" r="1" fill="#4A90E2"/>
+    
+    <!-- Additional circuit traces within tail -->
+    <line x1="44" y1="38" x2="46" y2="40" stroke="#4A90E2" stroke-width="0.8"/>
+  </g>
+  
+  <!-- Text: ecom in medium blue -->
+  <text x="20" y="60" font-family="Arial, sans-serif" font-size="18" font-weight="normal" fill="#4A90E2">ecom</text>
+  
+  <!-- Text: SHARKS in darker blue/navy -->
+  <text x="75" y="60" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#1E3A5F">SHARKS</text>
+</svg>
+

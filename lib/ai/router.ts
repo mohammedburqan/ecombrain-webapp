@@ -29,28 +29,36 @@ export class AIProviderRouter {
     try {
       let result: string | any
 
+      // Optimize: Use lower temperature and maxTokens for faster generation
+      const optimizedOptions = {
+        temperature: options?.temperature ?? 0.3, // Default to lower temperature for speed
+        maxTokens: 500, // Limit tokens for faster generation
+      }
+
       if (options?.useStructuredOutput && options?.schema) {
         if (provider === 'gemini') {
           result = await geminiClient.generateStructuredOutput(
             prompt,
             options.schema,
-            { temperature: options.temperature }
+            { temperature: optimizedOptions.temperature }
           )
         } else {
           result = await openAIClient.generateStructuredOutput(
             prompt,
             options.schema,
-            { temperature: options.temperature }
+            { temperature: optimizedOptions.temperature }
           )
         }
       } else {
         if (provider === 'gemini') {
           result = await geminiClient.generateText(prompt, {
-            temperature: options?.temperature,
+            temperature: optimizedOptions.temperature,
+            maxTokens: optimizedOptions.maxTokens,
           })
         } else {
           result = await openAIClient.generateText(prompt, {
-            temperature: options?.temperature,
+            temperature: optimizedOptions.temperature,
+            maxTokens: optimizedOptions.maxTokens,
           })
         }
       }

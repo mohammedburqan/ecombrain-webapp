@@ -1,5 +1,5 @@
 import { createShopifyClient } from './client'
-import { createSupabaseServerClient } from '../supabase/server'
+import { createSupabaseClient } from '../supabase/server'
 
 export interface ColorScheme {
   primaryColor: string
@@ -17,7 +17,7 @@ export class ShopifyThemeOperations {
       throw new Error('Store access token not found')
     }
 
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     const { data: store } = await supabase
       .from('shopify_stores')
       .select('shopify_domain')
@@ -69,7 +69,7 @@ export class ShopifyThemeOperations {
       throw new Error('Store access token not found')
     }
 
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     const { data: store } = await supabase
       .from('shopify_stores')
       .select('shopify_domain')
@@ -107,7 +107,7 @@ export class ShopifyThemeOperations {
   }
 
   private async getStoreAccessToken(storeId: string): Promise<string | null> {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     
     const { data: store } = await supabase
       .from('shopify_stores')

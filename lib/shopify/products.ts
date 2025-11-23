@@ -1,5 +1,5 @@
 import { createShopifyClient } from './client'
-import { createSupabaseServerClient } from '../supabase/server'
+import { createSupabaseClient } from '../supabase/server'
 
 export interface ProductData {
   title: string
@@ -28,7 +28,7 @@ export class ShopifyProductOperations {
       throw new Error('Store access token not found')
     }
 
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     const { data: store } = await supabase
       .from('shopify_stores')
       .select('shopify_domain')
@@ -86,7 +86,7 @@ export class ShopifyProductOperations {
       throw new Error('Store access token not found')
     }
 
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     const { data: store } = await supabase
       .from('shopify_stores')
       .select('shopify_domain')
@@ -120,7 +120,7 @@ export class ShopifyProductOperations {
       throw new Error('Store access token not found')
     }
 
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     const { data: store } = await supabase
       .from('shopify_stores')
       .select('shopify_domain')
@@ -149,7 +149,7 @@ export class ShopifyProductOperations {
   }
 
   private async getStoreAccessToken(storeId: string): Promise<string | null> {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseClient()
     
     const { data: store } = await supabase
       .from('shopify_stores')
