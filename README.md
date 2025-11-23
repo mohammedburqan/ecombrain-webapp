@@ -1,4 +1,4 @@
-EcomBrain — Agentic Shopify Store Creator
+Ecomsharks (your EcomBrain) — Agentic Shopify Store Creator
 
 EcomBrain is a lightweight agent-powered webapp that builds fully configured Shopify stores automatically using AI. It combines multiple specialized agents with Gemini/GPT intelligence and Supabase-backed workflows to generate niches, branding, products, images, and deploy complete stores in minutes.
 
