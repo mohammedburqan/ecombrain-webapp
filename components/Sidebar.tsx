@@ -37,10 +37,16 @@ export function Sidebar({ userRole }: SidebarProps) {
 
   return (
     <div className="hidden md:flex w-64 flex-col bg-[#152042] border-r border-[#2a3b75]">
-      <div className="flex h-16 items-center px-6 border-b border-[#2a3b75]">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="relative h-8 w-32">
-            <Image src="/logo.svg" alt="ecom SHARKS Logo" fill className="object-contain" />
+      <div className="flex h-16 items-center justify-start px-6 border-b border-[#2a3b75]">
+        <Link href="/dashboard" className="flex items-center">
+          <div className="relative h-12 w-[140px]">
+            <Image 
+              src="/logo.svg" 
+              alt="ecom SHARKS Logo" 
+              fill 
+              className="object-contain object-left" 
+              priority
+            />
           </div>
         </Link>
       </div>
