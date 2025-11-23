@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 type UserRole = Database['public']['Tables']['users']['Row']['role']
 
 export async function getCurrentUser() {
-  const supabase = createSupabaseClient()
+  const supabase = await createSupabaseClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

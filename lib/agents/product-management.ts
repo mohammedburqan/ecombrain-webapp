@@ -69,7 +69,7 @@ export class ProductManagementAgent extends BaseAgent {
         'product_recommendation',
         prompt,
         {
-          provider: 'openai',
+          provider: 'gemini',
           useStructuredOutput: true,
           schema: {
             products: {

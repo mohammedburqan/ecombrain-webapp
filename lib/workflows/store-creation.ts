@@ -7,6 +7,8 @@ import { ShopifyDeploymentAgent } from '../agents/shopify-deployment'
 import { createSupabaseClient } from '../supabase/server'
 import { themeOperations } from '../shopify/theme'
 import { productOperations } from '../shopify/products'
+import { loadProductsFromJSON } from '../utils/products'
+import { generateProductImage } from '../utils/image-generation'
 
 export interface StoreCreationInput {
   userId: string
@@ -39,10 +41,10 @@ export class StoreCreationWorkflow {
     jobId: string
     progress: StoreCreationProgress[]
   }> {
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
 
     // Create job record
-    const { data: job } = await supabase
+    const { data: job, error: jobError } = await supabase
       .from('store_creation_jobs')
       .insert({
         user_id: input.userId,
@@ -53,6 +55,11 @@ export class StoreCreationWorkflow {
       })
       .select()
       .single()
+
+    // Check for errors in job creation
+    if (jobError || !job) {
+      throw new Error(`Failed to create store creation job: ${jobError?.message || 'Unknown error'}`)
+    }
 
     const progress: StoreCreationProgress[] = []
 
@@ -132,33 +139,33 @@ export class StoreCreationWorkflow {
         })
       }
 
-      // Step 3: Product Discovery/Selection
+      // Step 3: Product Discovery/Selection from JSON
       let products = input.products
       if (!products || products.length === 0) {
         progress.push({
           step: 'product_discovery',
           status: 'running',
           progress: 50,
-          message: 'Finding products for niche...',
+          message: 'Loading products from catalog...',
         })
 
-        const productAgent = new ProductManagementAgent('temp-product', 'Product Management Agent')
-        const productResult = await productAgent.execute({
-          action: 'find_products',
-          niche: nicheData,
-          limit: 20,
-        })
-
-        if (!productResult.success) {
-          throw new Error(`Product discovery failed: ${productResult.error}`)
+        // Load products from JSON file based on niche
+        if (!nicheData) {
+          throw new Error('Niche is required to load products')
+        }
+        
+        const jsonProducts = loadProductsFromJSON(nicheData)
+        
+        if (!jsonProducts || jsonProducts.length === 0) {
+          throw new Error('No products available for this niche.')
         }
 
-        products = productResult.data?.products || []
+        products = jsonProducts
         progress.push({
           step: 'product_discovery',
           status: 'completed',
           progress: 60,
-          message: `Found ${products.length} products`,
+          message: `Loaded ${products.length} products from catalog`,
         })
       } else {
         progress.push({
@@ -222,20 +229,93 @@ export class StoreCreationWorkflow {
         await themeOperations.applyColorScheme(storeId, colorScheme)
       }
 
-      // Add products
+      // Add products with image generation
       if (products && products.length > 0) {
-        const productData = products.map((p: any) => ({
-          title: p.product_name || p.name,
-          body_html: p.description || '',
-          product_type: p.type || '',
-          variants: [
-            {
-              price: p.price_range?.split('-')[0]?.replace('$', '') || '19.99',
-            },
-          ],
-        }))
+        progress.push({
+          step: 'product_creation',
+          status: 'running',
+          progress: 90,
+          message: `Creating ${products.length} products with images...`,
+        })
 
-        await productOperations.bulkCreateProducts(storeId, productData)
+        // Create products one by one to handle image generation
+        for (let i = 0; i < products.length; i++) {
+          const product = products[i]
+          
+          try {
+            // Generate image for product
+            progress.push({
+              step: 'product_creation',
+              status: 'running',
+              progress: 90 + Math.floor((i / products.length) * 5),
+              message: `Generating image for ${product.title || product.product_name || `product ${i + 1}`}...`,
+            })
+
+            let imageUrl: string | undefined
+            try {
+              // Use image_prompt if available, otherwise use product title/description
+              const imagePrompt = product.image_prompt || 
+                `${product.title || product.product_name || 'product'}, ${product.description || ''}`
+              
+              imageUrl = await generateProductImage(imagePrompt)
+            } catch (imageError) {
+              console.error(`Failed to generate image for product ${i + 1}:`, imageError)
+              // Continue without image if generation fails
+              imageUrl = undefined
+            }
+
+            // Prepare product data
+            const productData: any = {
+              title: product.title || product.product_name || product.name || `Product ${i + 1}`,
+              body_html: product.description || '',
+              product_type: product.type || '',
+              variants: [
+                {
+                  price: product.price?.replace('$', '') || product.price_range?.split('-')[0]?.replace('$', '') || '19.99',
+                },
+              ],
+            }
+
+            // Add image if generated
+            if (imageUrl) {
+              productData.images = [
+                {
+                  src: imageUrl,
+                  alt: product.title || product.product_name || product.name,
+                },
+              ]
+            }
+
+            // Create product in Shopify
+            const result = await productOperations.createProduct(storeId, productData)
+            
+            // If image was generated but not included in product creation, upload it separately
+            if (imageUrl && result.productId) {
+              try {
+                await productOperations.uploadProductImage(
+                  storeId,
+                  result.productId,
+                  imageUrl,
+                  product.title || product.product_name || product.name
+                )
+              } catch (uploadError) {
+                console.error(`Failed to upload image for product ${result.productId}:`, uploadError)
+                // Continue even if image upload fails
+              }
+            }
+          } catch (productError) {
+            console.error(`Failed to create product ${i + 1}:`, productError)
+            // Continue with next product if one fails
+            continue
+          }
+        }
+
+        progress.push({
+          step: 'product_creation',
+          status: 'completed',
+          progress: 95,
+          message: `Created ${products.length} products successfully`,
+        })
       }
 
       // Update deployment status
@@ -293,7 +373,7 @@ export class StoreCreationWorkflow {
   }
 
   async getProgress(jobId: string): Promise<StoreCreationProgress[]> {
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     const { data: job } = await supabase
       .from('store_creation_jobs')

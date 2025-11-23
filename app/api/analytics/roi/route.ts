@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       )
     }
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     // Get store creation success rate
     const { data: jobs } = await supabase

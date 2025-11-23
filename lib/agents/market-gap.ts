@@ -25,7 +25,7 @@ Identify:
 5. Service gaps`
 
       const gaps = await aiRouter.route('market_gap_analysis', prompt, {
-        provider: 'openai',
+        provider: 'gemini',
         useStructuredOutput: true,
         schema: {
           gaps: {

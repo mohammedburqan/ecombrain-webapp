@@ -39,7 +39,7 @@ export abstract class BaseAgent {
     metadata?: Record<string, any>,
     taskId?: string
   ): Promise<void> {
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     await supabase.from('agent_logs').insert({
       agent_id: this.id,
@@ -52,7 +52,7 @@ export abstract class BaseAgent {
   }
 
   async updateMetrics(metricName: string, metricValue: number): Promise<void> {
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     await supabase.from('agent_metrics').insert({
       agent_id: this.id,
@@ -64,7 +64,7 @@ export abstract class BaseAgent {
 
   async updateStatus(status: 'active' | 'inactive'): Promise<void> {
     this.status = status
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     await supabase
       .from('agents')
@@ -94,7 +94,7 @@ export abstract class BaseAgent {
 
   async updateConfig(config: Partial<AgentConfig>): Promise<void> {
     this.config = { ...this.config, ...config }
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     await supabase
       .from('agents')

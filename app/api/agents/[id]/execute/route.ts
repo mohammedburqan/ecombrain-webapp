@@ -26,7 +26,7 @@ export async function POST(
       )
     }
 
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     // Create task record
     const { data: task } = await supabase

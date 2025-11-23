@@ -45,13 +45,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result, { status: result.success ? 200 : 500 })
   } catch (error: any) {
     console.error('Store creation error:', error)
+    // Ensure we always return JSON, not HTML
     return NextResponse.json(
       { 
         success: false,
         error: error.message || 'Failed to initiate store creation',
         details: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
     )
   }
 }

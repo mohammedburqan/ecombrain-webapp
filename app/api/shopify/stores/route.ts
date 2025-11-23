@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       )
     }
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     const { data, error } = await supabase
       .from('shopify_stores')
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       )
     }
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     const body = await request.json()
 
     const { data, error } = await supabase

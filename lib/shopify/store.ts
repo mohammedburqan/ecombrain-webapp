@@ -1,4 +1,4 @@
-import { createShopifyClient } from './client'
+import { createShopifyRestClient } from './client'
 import { createSupabaseClient } from '../supabase/server'
 
 export interface StoreConfig {
@@ -7,6 +7,13 @@ export interface StoreConfig {
   email?: string
   currency?: string
   timezone?: string
+}
+
+export interface StoreCredentials {
+  accessToken: string
+  shopifyDomain: string
+  apiKey?: string
+  apiSecret?: string
 }
 
 export class ShopifyStoreOperations {
@@ -18,7 +25,7 @@ export class ShopifyStoreOperations {
     // In production, this would use Shopify Partner API to create a development store
     // For now, we'll create a record in our database
     
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     const { data: store, error } = await supabase
       .from('shopify_stores')
@@ -44,23 +51,53 @@ export class ShopifyStoreOperations {
     }
   }
 
+  /**
+   * Get store access token from database
+   */
   async getStoreAccessToken(storeId: string): Promise<string | null> {
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     const { data: store } = await supabase
       .from('shopify_stores')
-      .select('access_token, shopify_domain')
+      .select('access_token')
       .eq('id', storeId)
       .single()
 
     return store?.access_token || null
   }
 
+  /**
+   * Get all store credentials including API key/secret from store_config
+   */
+  async getStoreCredentials(storeId: string): Promise<StoreCredentials | null> {
+    const supabase = await createSupabaseClient()
+    
+    const { data: store } = await supabase
+      .from('shopify_stores')
+      .select('access_token, shopify_domain, store_config')
+      .eq('id', storeId)
+      .single()
+
+    if (!store) {
+      return null
+    }
+
+    const storeConfig = (store.store_config as any) || {}
+    const apiCredentials = storeConfig.apiCredentials || {}
+
+    return {
+      accessToken: store.access_token || '',
+      shopifyDomain: store.shopify_domain,
+      apiKey: apiCredentials.apiKey,
+      apiSecret: apiCredentials.apiSecret,
+    }
+  }
+
   async updateStoreConfig(
     storeId: string,
     config: Partial<StoreConfig>
   ): Promise<void> {
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     const { data: store } = await supabase
       .from('shopify_stores')
@@ -78,23 +115,16 @@ export class ShopifyStoreOperations {
   }
 
   async getStoreSettings(storeId: string): Promise<any> {
-    const accessToken = await this.getStoreAccessToken(storeId)
-    if (!accessToken) {
-      throw new Error('Store access token not found')
-    }
-
-    const supabase = createSupabaseClient()
-    const { data: store } = await supabase
-      .from('shopify_stores')
-      .select('shopify_domain')
-      .eq('id', storeId)
-      .single()
-
-    if (!store) {
+    const credentials = await this.getStoreCredentials(storeId)
+    if (!credentials) {
       throw new Error('Store not found')
     }
 
-    const client = createShopifyClient(accessToken, store.shopify_domain)
+    if (!credentials.accessToken) {
+      throw new Error('Store access token not found')
+    }
+
+    const client = createShopifyRestClient(credentials.accessToken, credentials.shopifyDomain)
     const response = await client.get({ path: 'shop' })
 
     return response.body

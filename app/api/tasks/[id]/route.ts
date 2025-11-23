@@ -15,7 +15,7 @@ export async function GET(
       )
     }
     const { id } = await params
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     let query = supabase
       .from('agent_tasks')

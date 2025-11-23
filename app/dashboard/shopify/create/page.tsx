@@ -88,7 +88,7 @@ export default function CreateStorePage() {
     } catch (err: any) {
       const errorMessage = err.message || 'Failed to generate color schemes'
       setError(errorMessage.includes('API key') 
-        ? 'OpenAI API key is not configured. Please contact support.'
+        ? 'Gemini API key is not configured. Please contact support.'
         : errorMessage
       )
     } finally {
@@ -157,26 +157,26 @@ export default function CreateStorePage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Create New Store</h1>
+      <h1 className="text-3xl font-bold mb-8 text-white">Create New Store</h1>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-500/10 border border-red-500/30 text-white px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-[#1e2d5f] rounded-lg border border-[#2a3b75] shadow p-6">
         {/* Step 1: Niche Selection */}
         {step === 1 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Step 1: Choose Your Niche</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">Step 1: Choose Your Niche</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-medium mb-2 text-white/80">
                   Describe your niche or business idea
                 </label>
                 <textarea
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 bg-[#19254f] border border-[#2a3b75] rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3194d1]"
                   rows={4}
                   value={formData.nicheDescription}
                   onChange={(e) => setFormData({ ...formData, nicheDescription: e.target.value })}
@@ -186,14 +186,14 @@ export default function CreateStorePage() {
               <button
                 onClick={handleNicheSearch}
                 disabled={loading || !formData.nicheDescription}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-[#3194d1] text-white rounded-md hover:bg-[#267ab0] disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
               >
                 {loading ? 'Analyzing...' : 'Get Niche Recommendations'}
               </button>
 
               {nicheRecommendations.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="font-medium mb-3">Recommended Niches:</h3>
+                  <h3 className="font-medium mb-3 text-white">Recommended Niches:</h3>
                   <div className="space-y-2">
                     {nicheRecommendations.map((niche: any, index: number) => (
                       <div
@@ -202,11 +202,11 @@ export default function CreateStorePage() {
                           setFormData({ ...formData, selectedNiche: niche.niche_name })
                           setStep(2)
                         }}
-                        className="p-4 border border-gray-200 rounded-md hover:border-indigo-500 cursor-pointer"
+                        className="p-4 bg-[#19254f] border border-[#2a3b75] rounded-md hover:border-[#3194d1] cursor-pointer transition-colors"
                       >
-                        <h4 className="font-bold">{niche.niche_name}</h4>
-                        <p className="text-sm text-gray-700">Opportunity: {niche.market_opportunity}/10</p>
-                        <p className="text-sm text-gray-700">Competition: {niche.competition_level}/10</p>
+                        <h4 className="font-bold text-white">{niche.niche_name}</h4>
+                        <p className="text-sm text-white/70">Opportunity: {niche.market_opportunity}/10</p>
+                        <p className="text-sm text-white/70">Competition: {niche.competition_level}/10</p>
                       </div>
                     ))}
                   </div>
@@ -219,20 +219,20 @@ export default function CreateStorePage() {
         {/* Step 2: Color Scheme */}
         {step === 2 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Step 2: Choose Color Scheme</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">Step 2: Choose Color Scheme</h2>
             <div className="space-y-4">
-              <p className="text-gray-700">Selected Niche: {formData.selectedNiche}</p>
+              <p className="text-white/80">Selected Niche: <span className="text-white font-semibold">{formData.selectedNiche}</span></p>
               <button
                 onClick={handleColorSchemeGeneration}
                 disabled={loading}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-[#3194d1] text-white rounded-md hover:bg-[#267ab0] disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
               >
                 {loading ? 'Generating...' : 'Generate Color Schemes'}
               </button>
 
               {colorSchemes.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="font-medium mb-3">Color Scheme Options:</h3>
+                  <h3 className="font-medium mb-3 text-white">Color Scheme Options:</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {colorSchemes.map((scheme: any, index: number) => (
                       <div
@@ -241,19 +241,19 @@ export default function CreateStorePage() {
                           setFormData({ ...formData, selectedColorScheme: scheme })
                           setStep(3)
                         }}
-                        className="p-4 border border-gray-200 rounded-md hover:border-indigo-500 cursor-pointer"
+                        className="p-4 bg-[#19254f] border border-[#2a3b75] rounded-md hover:border-[#3194d1] cursor-pointer transition-colors"
                       >
                         <div className="flex gap-2 mb-2">
                           <div
-                            className="w-12 h-12 rounded"
+                            className="w-12 h-12 rounded border border-[#2a3b75]"
                             style={{ backgroundColor: scheme.primary_color }}
                           />
                           <div
-                            className="w-12 h-12 rounded"
+                            className="w-12 h-12 rounded border border-[#2a3b75]"
                             style={{ backgroundColor: scheme.secondary_color }}
                           />
                         </div>
-                        <p className="text-sm">{scheme.rationale}</p>
+                        <p className="text-sm text-white/80">{scheme.rationale}</p>
                       </div>
                     ))}
                   </div>
@@ -266,11 +266,11 @@ export default function CreateStorePage() {
         {/* Step 3: Shopify API Credentials */}
         {step === 3 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Step 3: Connect Your Shopify Store</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">Step 3: Connect Your Shopify Store</h2>
             <div className="space-y-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="font-semibold text-blue-900 mb-2">How to get your Shopify API credentials:</h3>
-                <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
+              <div className="bg-[#3194d1]/10 border border-[#3194d1]/30 rounded-lg p-4">
+                <h3 className="font-semibold text-white mb-2">How to get your Shopify API credentials:</h3>
+                <ol className="list-decimal list-inside space-y-2 text-sm text-white/80">
                   <li>Log in to your Shopify admin panel</li>
                   <li>Navigate to <strong>Settings</strong> → <strong>Apps and sales channels</strong></li>
                   <li>Click on <strong>Develop apps</strong> (or "Develop apps for your store")</li>
@@ -286,26 +286,26 @@ export default function CreateStorePage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Shopify Store Domain <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium mb-2 text-white/80">
+                    Shopify Store Domain <span className="text-white">*</span>
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 bg-[#19254f] border border-[#2a3b75] rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3194d1]"
                     value={formData.shopifyDomain}
                     onChange={(e) => setFormData({ ...formData, shopifyDomain: e.target.value })}
                     placeholder="your-store.myshopify.com"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Enter your store domain (e.g., mystore.myshopify.com)</p>
+                  <p className="text-xs text-white/60 mt-1">Enter your store domain (e.g., mystore.myshopify.com)</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    API Key <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium mb-2 text-white/80">
+                    API Key <span className="text-white">*</span>
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 bg-[#19254f] border border-[#2a3b75] rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3194d1]"
                     value={formData.apiKey}
                     onChange={(e) => setFormData({ ...formData, apiKey: e.target.value })}
                     placeholder="Your API Key"
@@ -313,12 +313,12 @@ export default function CreateStorePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    API Secret Key <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium mb-2 text-white/80">
+                    API Secret Key <span className="text-white">*</span>
                   </label>
                   <input
                     type="password"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 bg-[#19254f] border border-[#2a3b75] rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3194d1]"
                     value={formData.apiSecret}
                     onChange={(e) => setFormData({ ...formData, apiSecret: e.target.value })}
                     placeholder="Your API Secret Key"
@@ -326,31 +326,31 @@ export default function CreateStorePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Admin API Access Token <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium mb-2 text-white/80">
+                    Admin API Access Token <span className="text-white">*</span>
                   </label>
                   <input
                     type="password"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 bg-[#19254f] border border-[#2a3b75] rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3194d1]"
                     value={formData.adminApiAccessToken}
                     onChange={(e) => setFormData({ ...formData, adminApiAccessToken: e.target.value })}
                     placeholder="Your Admin API Access Token"
                   />
-                  <p className="text-xs text-gray-500 mt-1">This token is shown only once when you install the app. Make sure to copy it!</p>
+                  <p className="text-xs text-white/60 mt-1">This token is shown only once when you install the app. Make sure to copy it!</p>
                 </div>
               </div>
 
               <div className="flex gap-4">
                 <button
                   onClick={() => setStep(2)}
-                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                  className="px-4 py-2 bg-[#2a3b75] text-white rounded-md hover:bg-[#3194d1]/20 transition-colors"
                 >
                   Back
                 </button>
                 <button
                   onClick={() => setStep(4)}
                   disabled={!formData.shopifyDomain || !formData.apiKey || !formData.apiSecret || !formData.adminApiAccessToken}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-[#3194d1] text-white rounded-md hover:bg-[#267ab0] disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
@@ -362,13 +362,13 @@ export default function CreateStorePage() {
         {/* Step 4: Store Configuration */}
         {step === 4 && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">Step 4: Store Configuration</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">Step 4: Store Configuration</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Store Name</label>
+                <label className="block text-sm font-medium mb-2 text-white/80">Store Name</label>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-3 py-2 bg-[#19254f] border border-[#2a3b75] rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#3194d1]"
                   value={formData.storeName}
                   onChange={(e) => setFormData({ ...formData, storeName: e.target.value })}
                   placeholder="My Awesome Store"
@@ -377,14 +377,14 @@ export default function CreateStorePage() {
               <div className="flex gap-4">
                 <button
                   onClick={() => setStep(3)}
-                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                  className="px-4 py-2 bg-[#2a3b75] text-white rounded-md hover:bg-[#3194d1]/20 transition-colors"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleStoreCreation}
                   disabled={loading || !formData.storeName}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-600 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-[#3194d1] text-white rounded-md hover:bg-[#267ab0] disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Creating Store...' : 'Create Store'}
                 </button>

@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       )
     }
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     const searchParams = request.nextUrl.searchParams
     const status = searchParams.get('status')

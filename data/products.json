@@ -1,0 +1,205 @@
+{
+  "pets": [
+    {
+      "title": "Self-Cleaning Pet Grooming Brush",
+      "description": "Removes loose fur, detangles knots, and keeps your pet's coat smooth.",
+      "price": "24.99",
+      "image_prompt": "high resolution studio photo of a self-cleaning pet grooming brush, modern design, soft lighting, white background"
+    },
+    {
+      "title": "Automatic Water Dispenser Fountain",
+      "description": "Fresh flowing water keeps pets hydrated all day.",
+      "price": "39.99",
+      "image_prompt": "premium product photo of a pet water fountain dispenser with LED light, white minimalistic background"
+    },
+    {
+      "title": "Interactive Treat Puzzle Toy",
+      "description": "Improves cognitive skills while keeping pets entertained.",
+      "price": "19.99",
+      "image_prompt": "dog puzzle toy with compartments and treats, colorful, shot on clean studio backdrop"
+    },
+    {
+      "title": "No-Pull Adjustable Dog Harness",
+      "description": "Comfortable, durable, and escape-proof harness for safe walks.",
+      "price": "29.99",
+      "image_prompt": "sporty no-pull adjustable dog harness in black and neon colors, isolated studio shot"
+    },
+    {
+      "title": "Automatic Pet Feeder with Timer",
+      "description": "Scheduled meals for your pet when you're away.",
+      "price": "49.99",
+      "image_prompt": "smart automatic pet feeder with digital screen and food tray, product style photography"
+    },
+    {
+      "title": "Portable Pet Hair Vacuum Roller",
+      "description": "Removes pet hair instantly from furniture and clothing.",
+      "price": "14.99",
+      "image_prompt": "compact reusable pet hair remover roller, macro close-up product shot"
+    },
+    {
+      "title": "Pet Nail Grinder",
+      "description": "Safe and silent electric grinder for painless nail trimming.",
+      "price": "27.99",
+      "image_prompt": "electric pet nail grinder with LED light, clean professional product image"
+    },
+    {
+      "title": "Calming Donut Pet Bed",
+      "description": "Soft and cozy donut bed that reduces anxiety.",
+      "price": "34.99",
+      "image_prompt": "fluffy round calming pet bed in pastel colors on a white background"
+    },
+    {
+      "title": "Slow Feeder Anti-Choke Bowl",
+      "description": "Improves digestion by slowing down fast eaters.",
+      "price": "16.99",
+      "image_prompt": "slow feeder pet bowl with maze pattern, top-down studio photo"
+    },
+    {
+      "title": "Pet Car Seat Booster",
+      "description": "Keeps small pets safe and comfortable during car rides.",
+      "price": "44.99",
+      "image_prompt": "dog car seat booster with straps, grey cushion, studio photography"
+    },
+    {
+      "title": "Smart GPS Pet Tracker",
+      "description": "Track your pet's location in real time with the companion app.",
+      "price": "59.99",
+      "image_prompt": "sleek modern pet gps tracker collar, white studio product shot"
+    },
+    {
+      "title": "Floating Duck Chew Toy",
+      "description": "Durable chew toy perfect for pool play.",
+      "price": "12.99",
+      "image_prompt": "rubber duck shaped dog chew toy floating on water, high detail"
+    },
+    {
+      "title": "Pet Travel Water Bottle",
+      "description": "Leak-proof portable bottle with built-in bowl.",
+      "price": "18.99",
+      "image_prompt": "portable pet travel water bottle with foldable bowl, outdoor-inspired studio shot"
+    },
+    {
+      "title": "Double-Sided Grooming Glove",
+      "description": "Collects loose fur while massaging your pet.",
+      "price": "14.99",
+      "image_prompt": "pet grooming glove with silicone bristles, isolated product image"
+    },
+    {
+      "title": "Orthopedic Memory Foam Pet Mattress",
+      "description": "Supports joints and improves sleep quality.",
+      "price": "59.99",
+      "image_prompt": "pet orthopedic mattress with memory foam layers, high-end product photo"
+    },
+    {
+      "title": "Pet Treat Launcher",
+      "description": "Fun way to reward your pet during training.",
+      "price": "15.99",
+      "image_prompt": "pet treat launcher gun style device, colorful product photography"
+    },
+    {
+      "title": "LED Light-Up Dog Collar",
+      "description": "Perfect for night walks and better visibility.",
+      "price": "21.99",
+      "image_prompt": "glowing LED dog collar on dark background, long-exposure photography"
+    },
+    {
+      "title": "Scratch-Resistant Cat Tunnel",
+      "description": "Crinkle tunnel that encourages cats to play and explore.",
+      "price": "24.99",
+      "image_prompt": "cat tunnel made of durable fabric, playful colors, studio shot"
+    },
+    {
+      "title": "Automatic Laser Toy for Cats",
+      "description": "Hands-free way to keep cats active.",
+      "price": "29.99",
+      "image_prompt": "automatic rotating laser toy for cats, futuristic style lighting"
+    },
+    {
+      "title": "Pet Hair Dryer with Comb",
+      "description": "Quick drying and brushing in one tool.",
+      "price": "39.99",
+      "image_prompt": "pet grooming hair dryer comb combo, studio white background"
+    }
+  ],
+  "kitchenware": [
+    {
+      "title": "3-in-1 Vegetable Slicer",
+      "price": "19.99",
+      "description": "Makes slicing vegetables fast and easy.",
+      "image_prompt": "3-in-1 vegetable slicer with blades, clean top-down product shot"
+    },
+    {
+      "title": "Oil Spray Bottle",
+      "price": "14.99",
+      "description": "Perfect mist sprayer for cooking.",
+      "image_prompt": "oil spray bottle for kitchen on marble background"
+    },
+    {
+      "title": "Stainless Steel Garlic Press",
+      "price": "12.99",
+      "description": "Durable and efficient garlic crusher.",
+      "image_prompt": "garlic press studio product shot"
+    }
+  ],
+  "kids": [
+    {
+      "title": "Creative Montessori Puzzle Board",
+      "price": "22.99",
+      "description": "Improves fine motor skills.",
+      "image_prompt": "wooden montessori puzzle board"
+    },
+    {
+      "title": "Water Drawing Mat",
+      "price": "18.99",
+      "description": "Reusable mess-free coloring mat.",
+      "image_prompt": "kids water drawing mat with colorful pens"
+    },
+    {
+      "title": "Soft Plush Animal Toy",
+      "price": "15.99",
+      "description": "Cute and huggable plush toy.",
+      "image_prompt": "fluffy plush animal toy, soft light"
+    }
+  ],
+  "health_beauty": [
+    {
+      "title": "Skin Rejuvenation LED Mask",
+      "price": "39.99",
+      "description": "Enhances skin tone and texture.",
+      "image_prompt": "LED skincare mask futuristic close-up"
+    },
+    {
+      "title": "Essential Oil Diffuser",
+      "price": "29.99",
+      "description": "Relaxing aromatherapy experience.",
+      "image_prompt": "minimalist essential oil diffuser in soft lighting"
+    },
+    {
+      "title": "Electric Face Cleansing Brush",
+      "price": "19.99",
+      "description": "Deep pore cleansing with soft bristles.",
+      "image_prompt": "face cleansing brush clean white background"
+    }
+  ],
+  "fitness": [
+    {
+      "title": "Resistance Bands Set",
+      "description": "Full workout anywhere, anytime.",
+      "price": "22.99",
+      "image_prompt": "colored resistance bands neatly arranged, gym style background"
+    },
+    {
+      "title": "Adjustable Jump Rope",
+      "description": "Perfect for cardio training.",
+      "price": "12.99",
+      "image_prompt": "black adjustable jump rope coiled on concrete background"
+    },
+    {
+      "title": "Portable Core Roller",
+      "description": "Strengthen abs and core muscles.",
+      "price": "27.99",
+      "image_prompt": "ab roller fitness wheel studio shot"
+    }
+  ]
+}
+

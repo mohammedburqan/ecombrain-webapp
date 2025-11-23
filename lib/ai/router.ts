@@ -1,7 +1,6 @@
 import { geminiClient } from './gemini'
-import { openAIClient } from './openai'
 
-export type AIProvider = 'gemini' | 'openai'
+export type AIProvider = 'gemini'
 
 export interface AIUsageMetrics {
   provider: AIProvider
@@ -36,31 +35,16 @@ export class AIProviderRouter {
       }
 
       if (options?.useStructuredOutput && options?.schema) {
-        if (provider === 'gemini') {
-          result = await geminiClient.generateStructuredOutput(
-            prompt,
-            options.schema,
-            { temperature: optimizedOptions.temperature }
-          )
-        } else {
-          result = await openAIClient.generateStructuredOutput(
-            prompt,
-            options.schema,
-            { temperature: optimizedOptions.temperature }
-          )
-        }
+        result = await geminiClient.generateStructuredOutput(
+          prompt,
+          options.schema,
+          { temperature: optimizedOptions.temperature }
+        )
       } else {
-        if (provider === 'gemini') {
-          result = await geminiClient.generateText(prompt, {
-            temperature: optimizedOptions.temperature,
-            maxTokens: optimizedOptions.maxTokens,
-          })
-        } else {
-          result = await openAIClient.generateText(prompt, {
-            temperature: optimizedOptions.temperature,
-            maxTokens: optimizedOptions.maxTokens,
-          })
-        }
+        result = await geminiClient.generateText(prompt, {
+          temperature: optimizedOptions.temperature,
+          maxTokens: optimizedOptions.maxTokens,
+        })
       }
 
       // Track usage (simplified - actual token counting would be more complex)
@@ -68,77 +52,23 @@ export class AIProviderRouter {
 
       return result
     } catch (error) {
-      console.error(`Error with ${provider}, trying fallback...`, error)
-      
-      // Fallback to the other provider
-      const fallbackProvider = provider === 'gemini' ? 'openai' : 'gemini'
-      
-      try {
-        if (options?.useStructuredOutput && options?.schema) {
-          if (fallbackProvider === 'gemini') {
-            return await geminiClient.generateStructuredOutput(
-              prompt,
-              options.schema,
-              { temperature: options.temperature }
-            )
-          } else {
-            return await openAIClient.generateStructuredOutput(
-              prompt,
-              options.schema,
-              { temperature: options.temperature }
-            )
-          }
-        } else {
-          if (fallbackProvider === 'gemini') {
-            return await geminiClient.generateText(prompt, {
-              temperature: options?.temperature,
-            })
-          } else {
-            return await openAIClient.generateText(prompt, {
-              temperature: options?.temperature,
-            })
-          }
-        }
-      } catch (fallbackError) {
-        throw new Error(
-          `Both AI providers failed. Original: ${error instanceof Error ? error.message : 'Unknown'}, Fallback: ${fallbackError instanceof Error ? fallbackError.message : 'Unknown'}`
-        )
-      }
+      console.error(`Error with Gemini:`, error)
+      throw new Error(
+        `Gemini API error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
     }
   }
 
   private selectProvider(taskType: string): AIProvider {
-    // Route specific tasks to preferred providers
-    const geminiPreferredTasks = [
-      'orchestration',
-      'multi_agent_coordination',
-      'workflow_planning',
-    ]
-
-    const openAIPreferredTasks = [
-      'niche_analysis',
-      'color_recommendation',
-      'copywriting',
-      'structured_analysis',
-    ]
-
-    if (geminiPreferredTasks.some((task) => taskType.includes(task))) {
-      return 'gemini'
-    }
-
-    if (openAIPreferredTasks.some((task) => taskType.includes(task))) {
-      return 'openai'
-    }
-
-    // Default to Gemini for orchestration, OpenAI for structured tasks
-    return 'openai'
+    // Always use Gemini as the default provider
+    return 'gemini'
   }
 
   private trackUsage(provider: AIProvider, taskType: string) {
     // Simplified usage tracking - in production, track actual tokens
     this.usageMetrics.push({
       provider,
-      model: provider === 'gemini' ? 'gemini-2.0-flash-exp' : 'gpt-4',
+      model: 'gemini-2.0-flash-exp',
       tokensUsed: 1000, // Placeholder
       cost: 0.001, // Placeholder
       timestamp: new Date(),

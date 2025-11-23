@@ -15,7 +15,7 @@ export async function GET(
       )
     }
     const { id } = await params
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     
     const { data, error } = await supabase
       .from('agents')
@@ -47,7 +47,7 @@ export async function PUT(
       )
     }
     const { id } = await params
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
     const body = await request.json()
 
     const { data, error } = await supabase
@@ -86,7 +86,7 @@ export async function DELETE(
       )
     }
     const { id } = await params
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
 
     const { error } = await supabase
       .from('agents')

@@ -40,7 +40,7 @@ export class MarketIntelligenceAgent extends BaseAgent {
       : `Analyze current e-commerce market trends and opportunities.`
 
     const analysis = await aiRouter.route('market_analysis', prompt, {
-      provider: 'openai',
+      provider: 'gemini',
       temperature: 0.5,
     })
 
@@ -74,7 +74,7 @@ export class MarketIntelligenceAgent extends BaseAgent {
     const prompt = `Analyze current trends for these keywords: ${keywords.join(', ')}. Provide insights on search volume, growth, and related trends.`
 
     const trends = await aiRouter.route('trend_analysis', prompt, {
-      provider: 'openai',
+      provider: 'gemini',
     })
 
     await this.updateMetrics('trends_tracked', keywords.length)

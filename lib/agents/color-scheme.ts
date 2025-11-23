@@ -1,5 +1,5 @@
 import { BaseAgent, TaskInput, TaskOutput } from './base-agent'
-import { openAIClient } from '../ai/openai'
+import { geminiClient } from '../ai/gemini'
 import { AgentType } from '@/types/database'
 
 export class ColorSchemeAgent extends BaseAgent {
@@ -18,7 +18,7 @@ export class ColorSchemeAgent extends BaseAgent {
 
       await this.log('info', `Generating color scheme for niche: ${niche}`)
 
-      const colorScheme = await openAIClient.recommendColorScheme(niche, brandPersonality)
+      const colorScheme = await geminiClient.recommendColorScheme(niche, brandPersonality)
 
       await this.updateMetrics('color_schemes_generated', 1)
       await this.log('info', `Color scheme generated: ${colorScheme.primary_color}`, {
@@ -54,7 +54,7 @@ export class ColorSchemeAgent extends BaseAgent {
     try {
       // Generate all schemes in parallel for 3x speed improvement
       const schemePromises = Array.from({ length: count }, () => 
-        openAIClient.recommendColorScheme(niche)
+        geminiClient.recommendColorScheme(niche)
       )
       const schemes = await Promise.all(schemePromises)
 

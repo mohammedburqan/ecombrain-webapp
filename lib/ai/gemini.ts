@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'AIzaSyAN04TOLMmZbAUF8cH-Ba_YNjMaiWGZgow'
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
 
 export class GeminiClient {
   private model: any
@@ -94,6 +95,81 @@ Return a JSON object with:
       },
       { temperature: 0.3 }
     )
+  }
+
+  async analyzeNiche(nicheDescription: string): Promise<{
+    niche_name: string
+    market_opportunity: number
+    competition_level: number
+    recommended_colors: string[]
+    target_audience: string
+    key_products: string[]
+  }> {
+    const prompt = `E-commerce niche: ${nicheDescription}
+Return JSON: {niche_name, market_opportunity:1-10, competition_level:1-10, recommended_colors:[hex], target_audience, key_products:[...]}`
+
+    return this.generateStructuredOutput(
+      prompt,
+      {
+        niche_name: { type: 'string' },
+        market_opportunity: { type: 'number' },
+        competition_level: { type: 'number' },
+        recommended_colors: { type: 'array', items: { type: 'string' } },
+        target_audience: { type: 'string' },
+        key_products: { type: 'array', items: { type: 'string' } },
+      },
+      { temperature: 0.3 }
+    )
+  }
+
+  async recommendColorScheme(
+    niche: string,
+    brandPersonality?: string
+  ): Promise<{
+    primary_color: string
+    secondary_color: string
+    accent_colors: string[]
+    rationale: string
+  }> {
+    const prompt = `Niche: ${niche}${brandPersonality ? ` | Personality: ${brandPersonality}` : ''}
+Return JSON: {primary_color:hex, secondary_color:hex, accent_colors:[hex], rationale:brief}`
+
+    return this.generateStructuredOutput(
+      prompt,
+      {
+        primary_color: { type: 'string' },
+        secondary_color: { type: 'string' },
+        accent_colors: { type: 'array', items: { type: 'string' } },
+        rationale: { type: 'string' },
+      },
+      { temperature: 0.4 }
+    )
+  }
+
+  async generateImage(prompt: string): Promise<string> {
+    try {
+      // Use Gemini's image generation capabilities
+      // Note: Gemini 2.0 Flash supports image generation through the Imagen API
+      // For now, we'll use a text-to-image approach or fallback to a placeholder
+      
+      // Try using Gemini's multimodal capabilities if available
+      // This is a placeholder implementation - in production, you'd use Google's Imagen API
+      // or another image generation service
+      
+      // For now, return a placeholder URL that can be replaced with actual image generation
+      // In a real implementation, you would call an image generation API here
+      
+      // Using a placeholder service - replace with actual image generation API
+      // Example: Using a service like Imagen, DALL-E, or Stable Diffusion
+      
+      // Placeholder: Return a data URL or use an image generation service
+      // For production, integrate with Google Imagen API or another service
+      throw new Error('Image generation not yet implemented - please integrate with an image generation API')
+    } catch (error) {
+      console.error('Image generation error:', error)
+      // Fallback: Return a placeholder or throw
+      throw new Error(`Image generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
   }
 }
 

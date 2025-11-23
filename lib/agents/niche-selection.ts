@@ -1,5 +1,5 @@
 import { BaseAgent, TaskInput, TaskOutput } from './base-agent'
-import { openAIClient } from '../ai/openai'
+import { geminiClient } from '../ai/gemini'
 import { aiRouter } from '../ai/router'
 import { AgentType } from '@/types/database'
 
@@ -14,8 +14,8 @@ export class NicheSelectionAgent extends BaseAgent {
 
       const nicheDescription = input.nicheDescription || input.query || 'e-commerce opportunities'
 
-      // Use OpenAI for structured niche analysis
-      const analysis = await openAIClient.analyzeNiche(nicheDescription)
+      // Use Gemini for structured niche analysis
+      const analysis = await geminiClient.analyzeNiche(nicheDescription)
 
       await this.updateMetrics('niches_analyzed', 1)
       await this.updateMetrics('market_opportunity_avg', analysis.market_opportunity)
@@ -60,7 +60,7 @@ export class NicheSelectionAgent extends BaseAgent {
         'niche_analysis',
         prompt,
         {
-          provider: 'openai',
+          provider: 'gemini',
           useStructuredOutput: true,
           schema: {
             niches: {

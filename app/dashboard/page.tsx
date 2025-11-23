@@ -2,7 +2,7 @@ import { createSupabaseClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export default async function DashboardPage() {
-  const supabase = createSupabaseClient()
+  const supabase = await createSupabaseClient()
   
   const { data: agents } = await supabase
     .from('agents')
@@ -29,28 +29,28 @@ export default async function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
-          <p className="text-gray-400">Welcome back to ecom SHARKS. Here's what's happening today.</p>
+          <p className="text-white/80">Welcome back to ecom SHARKS. Here's what's happening today.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-[#1e2d5f] p-6 rounded-xl border border-[#2a3b75]">
-          <h3 className="text-gray-400 text-sm font-medium">Total Agents</h3>
+          <h3 className="text-white/70 text-sm font-medium">Total Agents</h3>
           <p className="text-3xl font-bold mt-2 text-white">{totalAgents}</p>
         </div>
 
         <div className="bg-[#1e2d5f] p-6 rounded-xl border border-[#2a3b75]">
-          <h3 className="text-gray-400 text-sm font-medium">Active Tasks</h3>
+          <h3 className="text-white/70 text-sm font-medium">Active Tasks</h3>
           <p className="text-3xl font-bold mt-2 text-white">{activeTasks}</p>
         </div>
 
         <div className="bg-[#1e2d5f] p-6 rounded-xl border border-[#2a3b75]">
-          <h3 className="text-gray-400 text-sm font-medium">Success Rate</h3>
+          <h3 className="text-white/70 text-sm font-medium">Success Rate</h3>
           <p className="text-3xl font-bold mt-2 text-white">{successRate}%</p>
         </div>
 
         <div className="bg-[#1e2d5f] p-6 rounded-xl border border-[#2a3b75]">
-          <h3 className="text-gray-400 text-sm font-medium">Active Stores</h3>
+          <h3 className="text-white/70 text-sm font-medium">Active Stores</h3>
           <p className="text-3xl font-bold mt-2 text-white">{activeStores}</p>
         </div>
       </div>
@@ -67,13 +67,13 @@ export default async function DashboardPage() {
             </Link>
             <Link
               href="/dashboard/agents"
-              className="block px-4 py-2 bg-[#2a3b75] text-gray-200 rounded-md hover:bg-[#3194d1]/20 text-center transition-colors"
+              className="block px-4 py-2 bg-[#2a3b75] text-white rounded-md hover:bg-[#3194d1]/20 text-center transition-colors"
             >
               Manage Agents
             </Link>
             <Link
               href="/dashboard/tasks"
-              className="block px-4 py-2 bg-[#2a3b75] text-gray-200 rounded-md hover:bg-[#3194d1]/20 text-center transition-colors"
+              className="block px-4 py-2 bg-[#2a3b75] text-white rounded-md hover:bg-[#3194d1]/20 text-center transition-colors"
             >
               View Tasks
             </Link>
@@ -85,19 +85,19 @@ export default async function DashboardPage() {
           <div className="space-y-2">
             {tasks && tasks.slice(0, 5).map((task: any) => (
               <div key={task.id} className="flex justify-between items-center py-2 border-b border-[#2a3b75]">
-                <span className="text-sm text-gray-300">{task.task_type}</span>
+                <span className="text-sm text-white">{task.task_type}</span>
                 <span className={`text-xs px-2 py-1 rounded ${
-                  task.status === 'completed' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                  task.status === 'running' ? 'bg-[#3194d1]/20 text-[#3194d1] border border-[#3194d1]/30' :
-                  task.status === 'failed' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                  'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                  task.status === 'completed' ? 'bg-green-500/20 text-white border border-green-500/30' :
+                  task.status === 'running' ? 'bg-[#3194d1]/20 text-white border border-[#3194d1]/30' :
+                  task.status === 'failed' ? 'bg-red-500/20 text-white border border-red-500/30' :
+                  'bg-gray-500/20 text-white border border-gray-500/30'
                 }`}>
                   {task.status}
                 </span>
               </div>
             ))}
             {(!tasks || tasks.length === 0) && (
-              <p className="text-gray-400 text-sm">No recent activity</p>
+              <p className="text-white/70 text-sm">No recent activity</p>
             )}
           </div>
         </div>

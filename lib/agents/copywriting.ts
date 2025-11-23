@@ -43,7 +43,7 @@ ${product?.features ? `Key features: ${product.features.join(', ')}` : ''}
 Make it persuasive, SEO-friendly, and highlight benefits.`
 
     const description = await aiRouter.route('copywriting', prompt, {
-      provider: 'openai',
+      provider: 'gemini',
       temperature: 0.7,
     })
 
@@ -61,7 +61,7 @@ ${platform ? `Platform: ${platform}` : ''}
 Make it attention-grabbing and conversion-focused.`
 
     const adCopy = await aiRouter.route('ad_copywriting', prompt, {
-      provider: 'openai',
+      provider: 'gemini',
       temperature: 0.8,
     })
 
@@ -75,7 +75,7 @@ Make it attention-grabbing and conversion-focused.`
     const prompt = `Write a ${emailType} email${context ? ` with context: ${JSON.stringify(context)}` : ''}.`
 
     const email = await aiRouter.route('email_copywriting', prompt, {
-      provider: 'openai',
+      provider: 'gemini',
     })
 
     return {

@@ -56,6 +56,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Allow auth callback route to proceed
+  if (request.nextUrl.pathname.startsWith('/auth/callback')) {
+    return supabaseResponse
+  }
+
   // Redirect authenticated users away from auth pages
   if ((request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup') && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url))

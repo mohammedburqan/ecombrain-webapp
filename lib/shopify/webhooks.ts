@@ -8,7 +8,7 @@ export interface WebhookEvent {
 
 export class ShopifyWebhookHandler {
   async handleWebhook(event: WebhookEvent): Promise<void> {
-    const supabase = createSupabaseClient()
+    const supabase = await createSupabaseClient()
 
     // Log webhook event
     await supabase.from('analytics_events').insert({

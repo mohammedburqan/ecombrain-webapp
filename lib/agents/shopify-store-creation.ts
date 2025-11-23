@@ -42,7 +42,7 @@ export class ShopifyStoreCreationAgent extends BaseAgent {
       }
 
       // Create store record in database
-      const supabase = createSupabaseClient()
+      const supabase = await createSupabaseClient()
       const { data: store, error } = await supabase
         .from('shopify_stores')
         .insert({
@@ -90,7 +90,7 @@ export class ShopifyStoreCreationAgent extends BaseAgent {
   }
 
   async updateStoreStatus(storeId: string, status: 'creating' | 'active' | 'suspended'): Promise<void> {
-    const supabase = createSupabaseServerClient()
+    const supabase = await createSupabaseClient()
     
     await supabase
       .from('shopify_stores')

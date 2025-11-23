@@ -2,7 +2,7 @@
 
 :root {
   --background: #19254f;
-  --foreground: #ffffff;
+  --foreground: #19254f;
   --primary: #3194d1;
   --primary-dark: #267ab0;
   --card-bg: #1e2d5f;
@@ -20,8 +20,13 @@
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Default text color - white for regular text on dark backgrounds */
+body, p, h1, h2, h3, h4, h5, h6, span, div, label, td, th {
+  color: #ffffff;
 }
 
 /* Pattern background */

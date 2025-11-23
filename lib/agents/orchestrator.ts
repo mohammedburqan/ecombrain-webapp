@@ -43,7 +43,7 @@ export class AgentOrchestrator {
       )
 
       // Create collaboration session
-      const supabase = createSupabaseClient()
+      const supabase = await createSupabaseClient()
       const { data: session } = await supabase
         .from('collaboration_sessions')
         .insert({

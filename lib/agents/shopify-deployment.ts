@@ -24,7 +24,7 @@ export class ShopifyDeploymentAgent extends BaseAgent {
       })
 
       // Update deployment status
-      const supabase = createSupabaseClient()
+      const supabase = await createSupabaseClient()
       
       // Update store creation job status
       if (context?.jobId) {
@@ -93,7 +93,7 @@ export class ShopifyDeploymentAgent extends BaseAgent {
       
       // Update status to failed
       if (input.storeId) {
-        const supabase = createSupabaseClient()
+        const supabase = await createSupabaseClient()
         await supabase
           .from('store_creation_jobs')
           .update({
