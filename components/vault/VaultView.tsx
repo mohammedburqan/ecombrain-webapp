@@ -3,7 +3,6 @@
 import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Download, FileText, ChevronDown, ChevronUp } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { getSignedUrlAction } from "@/lib/pipeline/actions";
 import type { VaultGroup } from "@/lib/brands/queries";

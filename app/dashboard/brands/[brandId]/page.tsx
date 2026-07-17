@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Package, Target, Archive } from "lucide-react";
+import { Package, Target } from "lucide-react";
 import { getBrandWorkspace } from "@/lib/brands/queries";
 import { BrandStatusBadge } from "@/components/brands/BrandStatusBadge";
 import { ArchiveBrandButton } from "@/components/brands/ArchiveBrandButton";

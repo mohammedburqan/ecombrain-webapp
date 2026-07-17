@@ -151,7 +151,7 @@ export async function getStepWithContext(
 
   // Fetch approved files from prerequisite steps.
   const prereqStepIds = STEP_REQUIRED_INPUTS[(stepRow as PipelineStep).step_key] ?? [];
-  let prerequisiteFiles: StepDetailContext["prerequisiteFiles"] = [];
+  const prerequisiteFiles: StepDetailContext["prerequisiteFiles"] = [];
 
   if (prereqStepIds.length > 0) {
     // Get the latest version of each prerequisite step's approved files.

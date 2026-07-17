@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 
 // Verify the environment variables the EcomSkool Companion App needs.
 const fs = require("fs");
