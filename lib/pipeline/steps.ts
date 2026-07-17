@@ -59,3 +59,37 @@ export function isStepDone(status: StepStatus): boolean {
 export function countApproved(statuses: StepStatus[]): number {
   return statuses.filter(isStepDone).length;
 }
+
+// Steps that use a checkbox confirmation (file upload is optional for these).
+// Maps to step_keys that have 'checkbox' in their output_file_types.
+export const CHECKBOX_STEP_KEYS = new Set(["pdp", "meta_campaign", "seo"]);
+
+// Per-step prerequisite step IDs (sort_order == id) whose approved files
+// should be shown as downloadable inputs on the step detail page.
+export const STEP_REQUIRED_INPUTS: Record<string, number[]> = {
+  offer_creation: [2, 3],
+  unit_economics: [5],
+  creative_strategy: [4, 5, 6],
+  branding_kit: [4, 5],
+  ad_scripts: [7, 8],
+  creative_production: [9],
+  pdp: [5, 8],
+  meta_campaign: [10, 11],
+  campaign_analysis: [12],
+  seo: [5, 8],
+  pl_workbook: [6],
+};
+
+// Visual grouping for the roadmap. Returns the "phase" label for a step.
+export type RoadmapPhase =
+  | "linear"       // steps 1-8
+  | "parallel"     // steps 9-11 and 14 (unlock together from step 8)
+  | "converge"     // step 12 (AND gate: needs 10 + 11)
+  | "final";       // steps 13 and 15
+
+export function getRoadmapPhase(sortOrder: number): RoadmapPhase {
+  if (sortOrder <= 8) return "linear";
+  if (sortOrder === 12) return "converge";
+  if (sortOrder === 13 || sortOrder === 15) return "final";
+  return "parallel"; // 9, 10, 11, 14
+}
