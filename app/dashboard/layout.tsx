@@ -1,37 +1,22 @@
-import { redirect } from 'next/navigation'
-import { createSupabaseClient } from '@/lib/supabase/server'
-import { Sidebar } from '@/components/Sidebar'
+import { requireAuth } from "@/lib/auth/session";
+import { listBrands } from "@/lib/brands/queries";
+import { DashboardShell } from "@/components/layout/DashboardShell";
 
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const supabase = await createSupabaseClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/login')
-  }
-
-  const { data: userData } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
+  const { profile, email } = await requireAuth();
+  const brands = await listBrands();
 
   return (
-    <div className="min-h-screen bg-[#19254f]">
-      <div className="flex">
-        <Sidebar userRole={userData?.role} />
-        {/* Main content */}
-        <main className="flex-1 p-8">
-          {children}
-        </main>
-      </div>
-    </div>
-  )
+    <DashboardShell
+      isAdmin={profile.role === "admin"}
+      brands={brands.map((b) => ({ id: b.id, name: b.name }))}
+      userName={profile.full_name ?? email ?? ""}
+    >
+      {children}
+    </DashboardShell>
+  );
 }
-

@@ -1,36 +1,77 @@
-Ecomsharks (your EcomBrain) — Agentic Shopify Store Creator
+# EcomSkool Companion App
 
-EcomBrain is a lightweight agent-powered webapp that builds fully configured Shopify stores automatically using AI. It combines multiple specialized agents with Gemini/GPT intelligence and Supabase-backed workflows to generate niches, branding, products, images, and deploy complete stores in minutes.
+The command center for EcomSkool's Arabic-speaking dropshipping community.
+Students do their AI work inside their own Claude.ai accounts using EcomSkool's
+skill system; **this app never calls any AI API**. It handles structure,
+storage, gating, and visibility around the **15-step skill pipeline**:
 
-Why
+- Enforces the correct order of the 15 pipeline steps (server-side gating).
+- Stores every uploaded output file (versioned, never overwritten).
+- Parses key numbers from uploaded Excel workbooks (later phase).
+- Shows progress dashboards to students and admins.
 
-To eliminate the manual work of researching niches, picking colors, writing product descriptions, creating products, and configuring Shopify stores.
+## Tech stack
 
-To automate store creation for speed and scale — ideal for testing many ideas fast.
+- **Next.js 16** (App Router) + **TypeScript** + **Tailwind CSS v4**
+- **Supabase** (Postgres, Auth, Storage) with **Row Level Security on every table**
+- **next-intl** for i18n — Arabic (default, RTL) + English (secondary)
+- Fonts: **Tajawal** (primary) with **Cairo** fallback
+- Excel parsing via **xlsx (SheetJS)** — used from Phase 2 onward
 
-To centralize all data, progress, and agent activity through a clean Supabase dashboard.
+## Getting started
 
-What
+1. **Install deps**
 
-Multi-agent system (niche selection, branding, color schemes, product creation, store deployment).
+   ```bash
+   npm install
+   ```
 
-Shopify API integration for automated product creation, collections, and store setup.
+2. **Configure environment**
 
-AI-generated product images and descriptions via Gemini/Nano + GPT.
+   ```bash
+   cp .env.local.example .env.local
+   # fill in your Supabase project URL + keys, then:
+   npm run check-env
+   ```
 
-Supabase backend for auth, logs, metrics, and real-time agent monitoring.
+3. **Apply the database schema** — run `supabase/migrations/0001_ecomskool_init.sql`
+   in the Supabase SQL editor (or via the Supabase CLI). It creates the tables,
+   RLS policies, triggers, and seeds the 15 pipeline steps.
 
-Store creation wizard with step-by-step flow:
-niche → colors → tokens → configuration → automation.
+4. **Promote admins** — after a co-founder signs up once, edit and run
+   `scripts/promote-admin.sql` to grant them the `admin` role.
 
-How
+5. **Run**
 
-User enters niche → AI selects best micro-niche.
+   ```bash
+   npm run dev
+   ```
 
-System generates brand colors, starter products, and AI image prompts.
+## Data model
 
-Shopify tokens are given → agent creates store structure and imports products.
+| Table | Purpose |
+| --- | --- |
+| `profiles` | Extends `auth.users` (role: `student` \| `admin`). |
+| `brands` | One product/store per row, owned by a student. |
+| `pipeline_steps` | Master definition of the 15 steps (admin-editable). |
+| `brand_step_progress` | Per-brand state of each step (locked → approved). |
+| `step_files` | Versioned, immutable file uploads per step. |
 
-All agent events are logged in Supabase; workflow orchestrators control each step.
+**Gating is server-side only.** A DB trigger seeds a brand's 15 progress rows on
+creation (step 1 unlocked, the rest locked). Students can *read* their progress
+but never mutate it directly — RLS blocks client writes, and role escalation is
+prevented by a trigger.
 
-Final result: a fully generated Shopify store with products, structure, and theme ready.
+## Project structure
+
+```
+app/                 App Router routes
+  (auth)/            Arabic RTL sign in / sign up / password reset
+  dashboard/         Shell + dashboard, brands, settings, admin
+  auth/              OAuth-style callback + signout route handlers
+components/          UI primitives, layout shell, brand & pipeline views
+i18n/                next-intl config + cookie locale
+lib/                 supabase clients, auth, brand queries/actions, pipeline
+messages/            ar.json (default) + en.json
+supabase/migrations/ SQL schema, RLS, triggers, seed
+```

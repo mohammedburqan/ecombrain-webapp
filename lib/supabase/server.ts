@@ -1,64 +1,48 @@
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
-import { createClient } from '@supabase/supabase-js'
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
+import { supabaseEnv } from "./env";
 
-export async function createSupabaseClient() {
-  const cookieStore = await cookies()
+// Supabase client bound to the current request's cookies. Use in Server
+// Components, Server Actions, and Route Handlers. Respects RLS as the signed-in
+// user.
+export async function createSupabaseServerClient() {
+  const cookieStore = await cookies();
+  const { url, anonKey } = supabaseEnv();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!supabaseUrl) {
-    throw new Error('NEXT_PUBLIC_SUPABASE_URL environment variable is not set. Please check your .env.local file.')
-  }
-
-  if (!supabaseAnonKey) {
-    throw new Error('NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable is not set. Please check your .env.local file.')
-  }
-
-  return createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-        set(name: string, value: string, options: any) {
-          cookieStore.set(name, value, options)
-        },
-        remove(name: string, options: any) {
-          cookieStore.set(name, '', options)
-        },
+  return createServerClient(url, anonKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
       },
-    }
-  )
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          );
+        } catch {
+          // `setAll` was called from a Server Component where cookies are
+          // read-only. The middleware refreshes the session cookie instead,
+          // so this is safe to ignore.
+        }
+      },
+    },
+  });
 }
 
-/**
- * Create a Supabase client with service role key (bypasses RLS)
- * Use this only for admin operations or when RLS policies cause issues
- */
+// Service-role client that BYPASSES RLS. Server-only. Never expose the service
+// role key to the browser. Use for trusted server-side gating in later phases.
 export function createSupabaseServiceRoleClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!supabaseUrl) {
-    throw new Error('NEXT_PUBLIC_SUPABASE_URL environment variable is not set. Please check your .env.local file.')
-  }
+  const { url } = supabaseEnv();
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!serviceRoleKey) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY environment variable is not set. Please check your .env.local file.')
+    throw new Error(
+      "Missing SUPABASE_SERVICE_ROLE_KEY. See .env.local.example (server-only).",
+    );
   }
 
-  return createClient(
-    supabaseUrl,
-    serviceRoleKey,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    }
-  )
+  return createClient(url, serviceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 }
